@@ -2,7 +2,7 @@
 	<v-container>
 
 		<div>
-			<v-menu bottom :close-on-click="closeOnClick">
+			<v-menu bottom :close-on-click=true>
 				<template v-slot:activator="{ on, attrs }">
 					<v-btn color="" light v-bind="attrs" v-on="on">
 						Price
@@ -22,28 +22,28 @@
 						<v-card-text>
 							<v-row>
 								<v-col class="px-4">
-									<v-range-slider v-model="range" 
+									<v-range-slider v-model="rangePrice" 
                   :max="max" 
                   :min="min" 
                   style="width: 400px" 
                   hide-details class="align-center">
 										<template v-slot:prepend>
 											<v-text-field 
-                      :value="range[0]" 
+                      :value="rangePrice[0]" 
                       class="mt-0 pt-0" 
                       hide-details single-line 
                       type="number" 
                       style="width: 60px" 
-                      @change="$set(range, 0, $event)"></v-text-field>
+                      @change="$set(rangePrice, 0, $event)"></v-text-field>
 										</template>
 										<template v-slot:append>
-											<v-text-field :value="range[1]" 
+											<v-text-field :value="rangePrice[1]" 
                       class="mt-0 pt-0" 
                       hide-details 
                       single-line 
                       type="number" 
                       style="width: 60px" 
-                      @change="$set(range, 1, $event)"></v-text-field>
+                      @change="$set(rangePrice, 1, $event)"></v-text-field>
 										</template>
 									</v-range-slider>
 								</v-col>
@@ -282,35 +282,35 @@
             <v-row>
               <v-col style="width: 300px">
                 City MPG
-                <v-range-slider v-model="range" 
+                <v-range-slider v-model="rangeCity" 
                   :max="cityMax" 
                   :min="cityMin" 
                 
                   hide-details class="align-center">
 										<template v-slot:prepend>
 											<v-text-field 
-                      :value="range[0]" 
+                      :value="rangeCity[0]" 
                       class="mt-0 pt-0" 
                       hide-details single-line 
                       type="number" 
                       style="width: 60px" 
-                      @change="$set(range, 0, $event)"></v-text-field>
+                      @change="$set(rangeCity, 0, $event)"></v-text-field>
 										</template>
 										<template v-slot:append>
-											<v-text-field :value="range[1]" 
+											<v-text-field :value="rangeCity[1]" 
                       class="mt-0 pt-0" 
                       hide-details 
                       single-line 
                       type="number" 
                       style="width: 60px" 
-                      @change="$set(range, 1, $event)"></v-text-field>
+                      @change="$set(rangeCity, 1, $event)"></v-text-field>
 										</template>
 									</v-range-slider>
                
               </v-col>
               <v-col style="width: 300px">
                 Highway MPG
-                <v-range-slider v-model="value" 
+                <v-range-slider v-model="rangeHighway" 
                   :max="highwayMax" 
                   :min="highwayMin" 
                   hide-details class="align-center">
@@ -321,7 +321,7 @@
                       hide-details single-line 
                       type="number" 
                       style="width: 60px" 
-                      @change="$set(range, 0, $event)"></v-text-field>
+                      @change="$set(rangeHighway, 0, $event)"></v-text-field>
 										</template>
 										<template v-slot:append>
 											<v-text-field :value="rangeHighway[1]" 
@@ -330,7 +330,7 @@
                       single-line 
                       type="number" 
                       style="width: 60px" 
-                      @change="$set(range, 1, $event)"></v-text-field>
+                      @change="$set(rangeHighway, 1, $event)"></v-text-field>
 										</template>
 									</v-range-slider>
               </v-col>
@@ -361,9 +361,7 @@
           </v-container>
         </v-list>
       </v-menu>
-
-    </div>
-
+    </div> 
 	</v-container>
 </template>
 
