@@ -2,26 +2,17 @@
   <v-app>
     <v-app-bar
       app
-      color="primary"
-      dark
+      color=""
+      light
     >
       <div class="d-flex align-center">
         <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
+          alt="AutoCat Logo"
+          class=""
           contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
+          src="./assets/AUTOCAT_2.png"
           transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
+          width="150"
         />
       </div>
 
@@ -32,25 +23,25 @@
         target="_blank"
         text
       >
-        <span class="mr-2">Latest Release</span>
+        <span class="mr-2">SEARCH CATALOG</span>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
     </v-app-bar>
 
     <v-main>
-      <HelloWorld/>
+      <SearchPage/>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+import SearchPage from './components/SearchPage';
 
 export default {
   name: 'App',
 
   components: {
-    HelloWorld,
+    SearchPage,
   },
 
   data: () => ({
@@ -58,3 +49,7 @@ export default {
   }),
 };
 </script>
+
+<style>
+
+</style>
