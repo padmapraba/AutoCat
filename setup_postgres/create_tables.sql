@@ -29,13 +29,12 @@ CREATE TABLE car_contains_engine
    FOREIGN KEY(engine_id) REFERENCES engine ON DELETE CASCADE,
    FOREIGN KEY(car_id) REFERENCES car ON DELETE CASCADE
 );
-
 CREATE TABLE body
 (
    body_id integer not null,
+   doors integer,
    body_style text,
    drive_wheel text,
-   doors integer,
    seats integer,
    PRIMARY KEY(body_id)
 );
@@ -50,12 +49,11 @@ CREATE TABLE car_has_body(
 
 CREATE TABLE fuel(
    fuel_id integer not null,
+   fuel_type text,
    highway_mpg integer,
    city_mpg integer,
-   fuel_type text,
    PRIMARY KEY (fuel_id)
 );
-
 CREATE TABLE runs_on(
    car_id integer not null,
    fuel_id integer not null,
