@@ -30,8 +30,6 @@ const searchDefaults = {
 
 app.get("/cars", async (req, res) => {
   try {
-    //    , body, engine, car_has_body, fuel, runs_on, car_contains_engine
-
     const filters = {
       model: req.query.model,
       make: req.query.make,
@@ -49,6 +47,11 @@ app.get("/cars", async (req, res) => {
       highwayMpgMax: req.query.highwayMpgMax,
       driveWheel: req.query.driveWheel,
       style: req.query.style,
+      cylinders: req.query.cylinders,
+      horsepowerMin: req.query.horsepowerMin,
+      horsepowerMax: req.query.horsepowerMax,
+      engineSize: req.query.engineSize,
+      engineLoc: req.query.engineLoc,
     };
 
     let query = `SELECT make, model, price, safety_rating, image_url FROM car`;
@@ -79,6 +82,18 @@ app.get("/cars", async (req, res) => {
       from["runs_on"] = true;
     }
 
+    if (
+      filters.engineLoc ||
+      filters.engineSize ||
+      filters.cylinders ||
+      filters.horsepowerMax ||
+      filters.horsepowerMin
+    ) {
+      from["engine"] = true;
+      from["car_contains_engine"] = true;
+    }
+
+    // primary filters
     if (filters.make) {
       where.push(`make = '${filters.make}'`);
     }
@@ -95,6 +110,7 @@ app.get("/cars", async (req, res) => {
       where.push(`safety_rating >= ${filters.safety || searchDefaults.safety}`);
     }
 
+    // fuel filters
     if (filters.fuelType) {
       where.push(`car.car_id = runs_on.car_id`);
       where.push(`runs_on.fuel_id = fuel.fuel_id`);
@@ -125,6 +141,7 @@ app.get("/cars", async (req, res) => {
       where.push(`fuel.city_mpg <= ${filters.cityMpgMax}`);
     }
 
+    // body filters
     if (filters.doorsMin) {
       where.push(`car.car_id = car_has_body.car_id`);
       where.push(`car_has_body.body_id = body.body_id`);
@@ -147,6 +164,37 @@ app.get("/cars", async (req, res) => {
       where.push(`car.car_id = car_has_body.car_id`);
       where.push(`car_has_body.body_id = body.body_id`);
       where.push(`body.seats <= ${filters.seatsMax}`);
+    }
+
+    // engine filters
+    if (filters.horsepowerMax) {
+      where.push(`car.car_id = car_contains_engine.car_id`);
+      where.push(`car_contains_engine.engine_id = engine.engine_id`);
+      where.push(`engine.horsepower <= ${filters.horsepowerMax}`);
+    }
+
+    if (filters.horsepowerMin) {
+      where.push(`car.car_id = car_contains_engine.car_id`);
+      where.push(`car_contains_engine.engine_id = engine.engine_id`);
+      where.push(`engine.horsepower >= ${filters.horsepowerMin}`);
+    }
+
+    if (filters.cylinders) {
+      where.push(`car.car_id = car_contains_engine.car_id`);
+      where.push(`car_contains_engine.engine_id = engine.engine_id`);
+      where.push(`engine.cylinders = '${filters.cylinders}'`);
+    }
+
+    if (filters.engineLoc) {
+      where.push(`car.car_id = car_contains_engine.car_id`);
+      where.push(`car_contains_engine.engine_id = engine.engine_id`);
+      where.push(`engine.engine_loc = '${filters.engineLoc}'`);
+    }
+
+    if (filters.engineSize) {
+      where.push(`car.car_id = car_contains_engine.car_id`);
+      where.push(`car_contains_engine.engine_id = engine.engine_id`);
+      where.push(`engine.engine_size = ${filters.engineSize}`);
     }
 
     if (filters.style) {
@@ -185,25 +233,33 @@ app.get("/cars", async (req, res) => {
       }
     }
 
+    // construct the FROM depending on what tables we read from
     const fromTables = Object.keys(from);
     if (fromTables.length > 0) {
       query += ", " + fromTables.join(" , ");
     }
 
+    // combine basic WHERE conditions
     if (where.length > 0) {
       query += " WHERE " + where.join(" AND ");
     }
 
-    if (whereOr.length > 0) {
-      query += " AND ";
+    // combine complex OR conditions
+    if (whereOr.length > 0) query += " AND ";
+    for (let i = 0; i < whereOr.length; i++) {
+      query += whereOr[i];
+      if (i != whereOr.length - 1) {
+        query += " AND ";
+      }
     }
 
-    console.log("final DB query: ", query);
+    console.log("Executing final DB query: ", query);
 
     const dbResult = await pg.query(query);
     const cars = dbResult.rows;
     return res.json({
-      cars,
+      result: cars,
+      count: cars.length,
     });
   } catch (error) {
     console.error("res error: ", error);
