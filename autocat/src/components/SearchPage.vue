@@ -4,7 +4,7 @@
       <v-row>
         <!-- price -->
         <v-col>
-          <v-menu bottom :close-on-click="true">
+          <v-menu bottom :close-on-content-click=false>
             <template v-slot:activator="{ on, attrs }">
               <v-btn color="" light v-bind="attrs" v-on="on"> Price </v-btn>
             </template>
@@ -24,6 +24,7 @@
                     <v-col class="px-4">
                       <v-range-slider
                         v-model="rangePrice"
+                        v-on:change="onPriceChange"
                         :max="max"
                         :min="min"
                         style="width: 400px"
@@ -63,80 +64,43 @@
 
         <!-- make and model -->
         <v-col>
-          <v-menu bottom :close-on-click="closeOnClick">
+          <v-menu bottom :close-on-content-click=false>
             <template v-slot:activator="{ on, attrs }">
               <v-btn color="" light v-bind="attrs" v-on="on">
                 Make & Model
               </v-btn>
             </template>
 
-            <v-list>
-              <v-app id="inspire">
-                <v-container fluid>
-                  <!-- <v-data-iterator
-        :items="items"
-        :items-per-page.sync="itemsPerPage"
-        :page.sync="page"
-        :search="search"
-        :sort-by="sortBy.toLowerCase()"
-        :sort-desc="sortDesc"
-        hide-default-footer
-      > -->
-                  <v-data-iterator>
-                    <template v-slot:header>
-                      <v-toolbar dark color="red" class="mb-1">
-                        <v-text-field
-                          v-model="search"
-                          clearable
-                          flat
-                          solo-inverted
-                          hide-details
-                          prepend-inner-icon="mdi-magnify"
-                          label="Search for makes"
-                        ></v-text-field>
-                        <template v-if="$vuetify.breakpoint.mdAndUp">
-                        </template>
-                      </v-toolbar>
-                    </template>
-
-                    <template v-slot:default="props">
-                      <v-row>
-                        <v-col
-                          v-for="item in props.items"
-                          :key="item.name"
-                          cols="12"
-                          sm="6"
-                          md="4"
-                          lg="3"
-                        >
-                          <v-card>
-                            <v-card-title class="subheading font-weight-bold">
-                              {{ item.name }}
-                            </v-card-title>
-
-                            <v-divider></v-divider>
-
-                            <v-list dense>
-                              <v-list-item
-                                v-for="(key, index) in filteredKeys"
-                                :key="index"
-                              >
-                              </v-list-item>
-                            </v-list>
-                          </v-card>
-                        </v-col>
-                      </v-row>
-                    </template>
-                  </v-data-iterator>
-                </v-container>
-              </v-app>
-            </v-list>
-          </v-menu>
+              <template>
+                <v-item-group mulitple value=[] v-on:change="onMakeSelected">
+                  <v-container>
+                    <v-row rows="3">
+                      <v-col cols="5" md="2">
+                        <v-item
+                          v-for="make in makes"
+                          v-bind:key="make.make"
+                          v-slot="{ active, toggle }"
+                          >
+                            <v-chip
+                              v-bind:key="make.make"
+                              active-class="red--text"
+                              :input-value="active"
+                              @click="toggle"
+                            >
+                              {{ make.make }}
+                            </v-chip>
+                        </v-item>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-item-group>
+              </template>
+         </v-menu>
         </v-col>
 
         <!-- body type -->
         <v-col>
-          <v-menu bottom :close-on-click="closeOnClick">
+          <v-menu bottom :close-on-content-click=false>
             <template v-slot:activator="{ on, attrs }">
               <v-btn color="" light v-bind="attrs" v-on="on"> Body Type </v-btn>
             </template>
@@ -161,6 +125,7 @@
                     Door
                     <v-slider
                       v-model="slider"
+                      v-on:change="onDoorsChange"
                       step="1"
                       class="align-center"
                       :max="doorMax"
@@ -200,6 +165,7 @@
                     Seats
                     <v-slider
                       v-model="slider"
+                      v-on:change="onSeatsChanged"
                       step="1"
                       class="align-center"
                       :max="seatsMax"
@@ -227,7 +193,7 @@
 
         <!-- features -->
         <v-col>
-          <v-menu bottom :close-on-click="closeOnClick">
+          <v-menu bottom :close-on-content-click=false>
             <template v-slot:activator="{ on, attrs }">
               <v-btn color="" light v-bind="attrs" v-on="on"> Features </v-btn>
             </template>
@@ -436,6 +402,8 @@
 
 
 <script>
+import { searchCars, getMakes } from '../api/api'
+
 export default {
   name: "SearchPage",
 
@@ -457,6 +425,51 @@ export default {
     highwayMax: 100,
     horsepowerMin: 0,
     horsepowerMax: 200,
+    makes: [{make: "Ford"}],
+    filters: {
+      priceMin: 0,
+      priceMax: 100000,
+      doorsMin: 2,
+      seatsMin: 4,
+      selectedMakes: [],
+    }
   }),
+
+  methods: {
+    async searchCars(){
+      const cars = await searchCars();
+      console.log(cars);
+    },
+    
+    async getMakes() {
+      const makes = await getMakes();
+      this.makes = makes.result;
+    },
+
+    onMakeSelected(event) {
+      const makeText = this.makes[event].make;
+      this.filters.selectedMakes.push(makeText);
+    },
+
+    onPriceChange(range){
+      this.filters.priceMin = range[0];
+      this.filters.priceMax = range[1];
+    },
+
+    onDoorsChange(value){
+      this.filters.doorsMin = value;
+      console.log(this.filters);
+    },
+
+    onSeatsChange(value){
+      this.filters.seatsMin = value;
+    }
+
+  },
+
+  created() {
+    this.searchCars();
+    this.getMakes();
+  }
 };
 </script>

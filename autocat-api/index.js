@@ -19,6 +19,13 @@ async function initPostgres() {
   console.log("query test", res.rows);
 }
 
+let allowCrossDomain = function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "*");
+  next();
+};
+app.use(allowCrossDomain);
+
 app.get("/", (req, res) => {
   res.json({ test: "hello" });
 });
@@ -27,6 +34,22 @@ const searchDefaults = {
   priceMin: 1000,
   priceMax: 100000,
 };
+
+app.get("/makes", async (req, res) => {
+  try {
+    let query = `SELECT DISTINCT make from car`;
+    console.log("Executing final DB query: ", query);
+
+    const dbResult = await pg.query(query);
+    const makes = dbResult.rows;
+    return res.json({
+      result: makes,
+      count: makes.length,
+    });
+  } catch (e) {
+    console.error(e);
+  }
+});
 
 app.get("/cars", async (req, res) => {
   try {
