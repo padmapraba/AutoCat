@@ -77,7 +77,7 @@ app.get("/cars", async (req, res) => {
       engineLoc: req.query.engineLoc,
     };
 
-    let query = `SELECT make, model, price, safety_rating, image_url FROM car`;
+    let query = `SELECT make, model, price, safety_rating, image_url FROM car`; 
     let where = [];
     let whereOr = [];
     let from = {};

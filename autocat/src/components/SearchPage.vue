@@ -112,6 +112,7 @@
                     Style
                     <v-autocomplete
                       v-model="values"
+                      v-on:change="onStyleChange"
                       :items="items"
                       outlined
                       dense
@@ -152,6 +153,7 @@
                     Drive
                     <v-autocomplete
                       v-model="values"
+                      v-on:change="onDriveChange"
                       :items="items"
                       outlined
                       dense
@@ -205,6 +207,7 @@
                     Safety
                     <v-slider
                       v-model="slider"
+                      v-on:change="onSafetyChange"
                       step="1"
                       class="align-center"
                       :max="seatsMax"
@@ -228,6 +231,7 @@
                     Fuel
                     <v-autocomplete
                       v-model="values"
+                      v-on:change="onFuelChange"
                       :items="items"
                       outlined
                       dense
@@ -244,6 +248,7 @@
                     City MPG
                     <v-range-slider
                       v-model="rangeCity"
+                      v-on:change="onCityMPGChange"
                       :max="cityMax"
                       :min="cityMin"
                       hide-details
@@ -277,6 +282,7 @@
                     Highway MPG
                     <v-range-slider
                       v-model="rangeHighway"
+                      v-on:change="onHighwayMPGChange"
                       :max="highwayMax"
                       :min="highwayMin"
                       hide-details
@@ -313,6 +319,7 @@
                     Horsepower
                     <v-range-slider
                       v-model="rangeHorsepower"
+                      v-on:change="onHorsepowerChange"
                       :max="horsepowerMax"
                       :min="horsepowerMin"
                       hide-details
@@ -346,6 +353,7 @@
                     Cylinders
                     <v-autocomplete
                       v-model="values"
+                      v-on:change="onCylindersChange"
                       :items="items"
                       outlined
                       dense
@@ -401,13 +409,6 @@
             class="mx-auto my-12"
             max-width="300"
           >
-    <!-- <template slot="progress">
-      <v-progress-linear
-        color="deep-purple"
-        height="10"
-        indeterminate
-      ></v-progress-linear>
-    </template> -->
 
     <v-img
       height="200"
@@ -447,13 +448,14 @@
     </v-card-text>
   </v-card>
   </template>
+
     </div>
   </v-container>
 </template>
 
 
 <script>
-import { searchCars, getMakes } from '../api/api'
+import { searchCars, getMakes, getCars } from '../api/api'
 
 export default {
   name: "SearchPage",
@@ -477,6 +479,8 @@ export default {
     horsepowerMin: 0,
     horsepowerMax: 200,
     makes: [{make: "Ford"}],
+    // styles: [],
+    filteredCars: [{"make":"Ford","model":"Escape","price":"$25,555.00","safety_rating":5,"image_url":"https://www.ford.com/suvs-crossovers/escape/"}],
     filters: {
       priceMin: 0,
       priceMax: 100000,
@@ -514,13 +518,54 @@ export default {
 
     onSeatsChange(value){
       this.filters.seatsMin = value;
-    }
+    },
+
+    onSafetyChange(value) {
+      this.filters.safety_rating = value;
+    },
+
+    onCityMPGChange(range) {
+      this.filters.cityMin = range[0];
+      this.filters.cityMax = range[1];
+    },
+
+    onHighwayMPGChange(range) {
+      this.filters.highwayMin = range[0];
+      this.filters.highwayMax = range[1];
+    },
+
+    onHorsepowerChange(range) {
+      this.filters.horsepowerMin = range[0];
+      this.filters.horsepowerMax = range[1];
+    },
+
+    onStyleChange(value){
+      this.filters.style = value;
+    },
+
+    onDriveChange(value){
+      this.filters.driveWheel = value;
+    },
+
+    onFuelChange(value){
+      this.filters.fuelType = value;
+    },
+
+    onCylindersChange(value){
+        this.filters.cylinders = value;
+      },
+    // NOT SURE IF THIS WORKS
+    async filterCars() {
+      const cars = await getCars();
+      this.cars = cars.result;
+    },
 
   },
 
   created() {
     this.searchCars();
     this.getMakes();
+    this.filterCars();
   }
 };
 </script>
