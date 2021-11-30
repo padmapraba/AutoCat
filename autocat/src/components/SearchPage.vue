@@ -395,7 +395,58 @@
     </div>
 
     <div>
+        <template>
+          <v-card
+            :loading="loading"
+            class="mx-auto my-12"
+            max-width="300"
+          >
+    <!-- <template slot="progress">
+      <v-progress-linear
+        color="deep-purple"
+        height="10"
+        indeterminate
+      ></v-progress-linear>
+    </template> -->
 
+    <v-img
+      height="200"
+      src="@/assets/honda_accord.webp"
+      
+    ></v-img>
+
+    <v-card-title>Make Model</v-card-title>
+
+    <v-card-text>
+      <v-row
+        align="center"
+        class="mx-0"
+      >
+        <v-rating
+          :value="4.5"
+          color="amber"
+          dense
+          half-increments
+          readonly
+          size="14"
+        ></v-rating>
+
+        <div class="grey--text ms-4">
+          Safety Rating
+        </div>
+      </v-row>
+
+      <div class="my-4 text-subtitle-1">
+        $ • Price
+      </div>
+
+      <div>
+
+        Website:
+      </div>
+    </v-card-text>
+  </v-card>
+  </template>
     </div>
   </v-container>
 </template>
