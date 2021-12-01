@@ -113,7 +113,7 @@
                     <v-autocomplete
                       v-model="values"
                       v-on:change="onStyleChange"
-                      :items="items"
+                      :items="styles"
                       outlined
                       dense
                       chips
@@ -154,7 +154,7 @@
                     <v-autocomplete
                       v-model="values"
                       v-on:change="onDriveChange"
-                      :items="items"
+                      :items="driveWheels"
                       outlined
                       dense
                       chips
@@ -232,7 +232,7 @@
                     <v-autocomplete
                       v-model="values"
                       v-on:change="onFuelChange"
-                      :items="items"
+                      :items="fuelTypes"
                       outlined
                       dense
                       chips
@@ -399,63 +399,85 @@
             </v-list>
           </v-menu>
         </v-col>
+        <v-col>
+          <v-btn
+            v-on:click="searchCars"
+            color="primary"
+            depressed
+            elevation="1"
+            large
+            outlined
+            text
+          >Search</v-btn>
+        </v-col>
       </v-row>
     </div>
 
-    <div>
-        <template>
+
+    <template>
+    <v-container fluid>
+      <v-row dense align="stretch">
+        <v-col 
+          cols="12" 
+          sm="4"
+          v-for="(car, index) in carResults"
+          v-bind:key="index"
+        >
           <v-card
             :loading="loading"
-            class="mx-auto my-12"
+            class="mx-auto my-12 pa-2"
             max-width="300"
           >
 
-    <v-img
-      height="200"
-      src="@/assets/honda_accord.webp"
-      
-    ></v-img>
+        <v-img
+          height="200"
+          src="@/assets/honda_accord.webp"
+          
+        ></v-img>
 
-    <v-card-title>Make Model</v-card-title>
+        <v-card-title>{{car.make || "Car Make"}} {{ car.model || "Car Model" }} </v-card-title>
 
-    <v-card-text>
-      <v-row
-        align="center"
-        class="mx-0"
-      >
-        <v-rating
-          :value="4.5"
-          color="amber"
-          dense
-          half-increments
-          readonly
-          size="14"
-        ></v-rating>
+        <v-card-text>
+          <v-row
+            class="mx-0"
+          >
+            <v-rating
+              :value="car.safety_rating"
+              color="amber"
+              dense
+              half-increments
+              readonly
+              size="14"
+            ></v-rating>
 
-        <div class="grey--text ms-4">
-          Safety Rating
-        </div>
+            <div class="grey--text ms-4">
+              Safety Rating
+            </div>
+          </v-row>
+
+          <div class="my-4 text-subtitle-1">
+            $ • {{car.price}}
+          </div>
+
+          <div>
+
+            Website: <a>{{car.image_url}}</a>
+          </div>
+        </v-card-text>
+      </v-card>
+      </v-col>
+
+
       </v-row>
 
-      <div class="my-4 text-subtitle-1">
-        $ • Price
-      </div>
-
-      <div>
-
-        Website:
-      </div>
-    </v-card-text>
-  </v-card>
-  </template>
-
-    </div>
+    </v-container>
+    </template>
   </v-container>
 </template>
 
 
 <script>
-import { searchCars, getMakes, getCars } from '../api/api'
+import { searchCars, getMakes, getCars, getStyles, getDriveWheels, getFuelTypes } from '../api/api'
 
 export default {
   name: "SearchPage",
@@ -479,20 +501,26 @@ export default {
     horsepowerMin: 0,
     horsepowerMax: 200,
     makes: [{make: "Ford"}],
+    styles: [{"body_style": "Sedan"}],
+    fuelTypes: [{"fuel_type": "Gas"}],
+    driveWheels: [],
+    carResults: [],
     // styles: [],
-    filteredCars: [{"make":"Ford","model":"Escape","price":"$25,555.00","safety_rating":5,"image_url":"https://www.ford.com/suvs-crossovers/escape/"}],
     filters: {
       priceMin: 0,
       priceMax: 100000,
       doorsMin: 2,
       seatsMin: 4,
-      selectedMakes: [],
+      make: [],
     }
   }),
 
   methods: {
     async searchCars(){
-      const cars = await searchCars();
+      console.log(this.filters)
+      const cars = await searchCars(this.filters);
+      this.carResults.splice(0, this.carResults.length);
+      this.carResults = cars.result;
       console.log(cars);
     },
     
@@ -501,9 +529,24 @@ export default {
       this.makes = makes.result;
     },
 
+    async getStyles() {
+      const styles= await getStyles();
+      this.styles = styles.result.map(s => s.body_style.toUpperCase());
+    },
+
+    async getFuelTypes() {
+      const fuel = await getFuelTypes();
+      this.fuelTypes = fuel.result.map(x => x.fuel_type);
+    },
+
+    async getDriveWheels() {
+      const drives = await getDriveWheels();
+      this.driveWheels = drives.result.map(x => x.drive_wheel.toUpperCase());
+    },
+
     onMakeSelected(event) {
       const makeText = this.makes[event].make;
-      this.filters.selectedMakes.push(makeText);
+      this.filters.make = makeText;
     },
 
     onPriceChange(range){
@@ -521,7 +564,7 @@ export default {
     },
 
     onSafetyChange(value) {
-      this.filters.safety_rating = value;
+      this.filters.safety = value;
     },
 
     onCityMPGChange(range) {
@@ -540,11 +583,13 @@ export default {
     },
 
     onStyleChange(value){
-      this.filters.style = value;
+
+      // convert array to a string e.g "hatchback,sedan"
+      this.filters.style = value.join(",").toLowerCase();
     },
 
     onDriveChange(value){
-      this.filters.driveWheel = value;
+      this.filters.driveWheel = value.join(",").toLowerCase();
     },
 
     onFuelChange(value){
@@ -565,6 +610,9 @@ export default {
   created() {
     this.searchCars();
     this.getMakes();
+    this.getStyles();
+    this.getFuelTypes();
+    this.getDriveWheels();
     this.filterCars();
   }
 };

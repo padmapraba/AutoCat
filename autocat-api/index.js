@@ -35,7 +35,7 @@ const searchDefaults = {
   priceMax: 100000,
 };
 
-app.get("/makes", async (req, res) => {
+app.get("/options/makes", async (req, res) => {
   try {
     let query = `SELECT DISTINCT make from car`;
     console.log("Executing final DB query: ", query);
@@ -45,6 +45,54 @@ app.get("/makes", async (req, res) => {
     return res.json({
       result: makes,
       count: makes.length,
+    });
+  } catch (e) {
+    console.error(e);
+  }
+});
+
+app.get("/options/styles", async (req, res) => {
+  try {
+    let query = `SELECT DISTINCT body_style from body`;
+    console.log("Executing final DB query: ", query);
+
+    const dbResult = await pg.query(query);
+    const rows = dbResult.rows;
+    return res.json({
+      result: rows,
+      count: rows.length,
+    });
+  } catch (e) {
+    console.error(e);
+  }
+});
+
+app.get("/options/drives", async (req, res) => {
+  try {
+    let query = `SELECT DISTINCT drive_wheel from body`;
+    console.log("Executing final DB query: ", query);
+
+    const dbResult = await pg.query(query);
+    const rows = dbResult.rows;
+    return res.json({
+      result: rows,
+      count: rows.length,
+    });
+  } catch (e) {
+    console.error(e);
+  }
+});
+
+app.get("/options/fuel", async (req, res) => {
+  try {
+    let query = `SELECT DISTINCT fuel_type from fuel`;
+    console.log("Executing final DB query: ", query);
+
+    const dbResult = await pg.query(query);
+    const rows = dbResult.rows;
+    return res.json({
+      result: rows,
+      count: rows.length,
     });
   } catch (e) {
     console.error(e);
@@ -77,7 +125,7 @@ app.get("/cars", async (req, res) => {
       engineLoc: req.query.engineLoc,
     };
 
-    let query = `SELECT make, model, price, safety_rating, image_url FROM car`; 
+    let query = `SELECT make, model, price, safety_rating, image_url FROM car`;
     let where = [];
     let whereOr = [];
     let from = {};
