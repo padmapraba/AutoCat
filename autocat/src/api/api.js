@@ -81,3 +81,19 @@ export async function getDriveWheels() {
     console.error("API error", e);
   }
 }
+
+export async function getCylinderTypes() {
+  const url = `${HOST}/options/cylinders`;
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const obj = await response.json();
+    return obj;
+  } catch (e) {
+    console.error("API error", e);
+  }
+}

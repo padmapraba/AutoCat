@@ -14,10 +14,10 @@ CREATE TABLE engine
 (
     engine_id integer not NULL,
     horsepower integer,
-   	engine_size double precision,
-   	cylinders text,
-   	Engine_loc text,
-   	PRIMARY KEY (engine_id)
+    engine_size double precision,
+    cylinders text,
+    Engine_loc text,
+    PRIMARY KEY (engine_id)
 );
 
 CREATE TABLE car_contains_engine

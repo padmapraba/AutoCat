@@ -19,7 +19,7 @@ setup_postgres:
 	@echo "creating tables"
 	psql -d $(USER) -q -f setup_postgres/create_tables.sql
 	@echo "importing data"
-	psql -d $(USER) -q -c "COPY station FROM '$(ROOT)/bike_sharing_data/station.csv' DELIMITER ',' CSV;"
+	psql -d $(USER) -q -c " ' DELIMITER ',' CSV;"
 	psql -d $(USER) -q -c "COPY trip FROM '$(ROOT)/bike_sharing_data/trip.csv' DELIMITER ',' CSV;"
 	psql -d $(USER) -q -c "COPY weather FROM '$(ROOT)/bike_sharing_data/weather.csv' DELIMITER ',' CSV;"
 	@echo "test, count distinct business categories, the result should be 5"

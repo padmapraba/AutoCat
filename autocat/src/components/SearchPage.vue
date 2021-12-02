@@ -354,7 +354,7 @@
                     <v-autocomplete
                       v-model="values"
                       v-on:change="onCylindersChange"
-                      :items="items"
+                      :items="cylinders"
                       outlined
                       dense
                       chips
@@ -362,6 +362,17 @@
                       label="Cylinders"
                       multiple
                     ></v-autocomplete>
+                    <!-- <v-autocomplete
+                      v-model="values"
+                      v-on:change="onFuelChange"
+                      :items="fuelTypes"
+                      outlined
+                      dense
+                      chips
+                      small-chips
+                      label="Fuel Type"
+                      multiple
+                    ></v-autocomplete> -->
                   </v-col>
                 </v-row>
 
@@ -479,7 +490,7 @@
 
 
 <script>
-import { searchCars, getMakes, getCars, getStyles, getDriveWheels, getFuelTypes } from '../api/api'
+import { searchCars, getMakes, getCars, getStyles, getDriveWheels, getFuelTypes , getCylinderTypes} from '../api/api'
 
 export default {
   name: "SearchPage",
@@ -489,7 +500,7 @@ export default {
     rangePrice: [0, 100000],
     rangeCity: [0, 100],
     rangeHighway: [0, 100],
-    rangeHorsepower: [0, 200],
+    rangeHorsepower: [0, 300],
     min: 0,
     max: 100000,
     doorMin: 2,
@@ -501,10 +512,11 @@ export default {
     highwayMin: 0,
     highwayMax: 100,
     horsepowerMin: 0,
-    horsepowerMax: 200,
+    horsepowerMax: 300,
     makes: [{make: "Ford"}],
     styles: [{"body_style": "Sedan"}],
     fuelTypes: [{"fuel_type": "Gas"}],
+    cylinders: [{"cylinders":3}],
     driveWheels: [],
     carResults: [],
     // styles: [],
@@ -546,6 +558,11 @@ export default {
       this.driveWheels = drives.result.map(x => x.drive_wheel.toUpperCase());
     },
 
+    async getCylinderTypes() {
+      const cylinders = await getCylinderTypes();
+      this.cylinderTypes = cylinders.result.map(x => x.cylinders)
+    },
+
     onMakeSelected(event) {
       const makeText = this.makes[event].make;
       this.filters.make = makeText;
@@ -585,8 +602,6 @@ export default {
     },
 
     onStyleChange(value){
-
-      // convert array to a string e.g "hatchback,sedan"
       this.filters.style = value.join(",").toLowerCase();
     },
 
@@ -600,7 +615,10 @@ export default {
 
     onCylindersChange(value){
         this.filters.cylinders = value;
-      },
+    },
+
+    
+
     // NOT SURE IF THIS WORKS
     async filterCars() {
       const cars = await getCars();
@@ -620,6 +638,7 @@ export default {
     this.getStyles();
     this.getFuelTypes();
     this.getDriveWheels();
+    this.getCylinderTypes();
     this.filterCars();
   }
 };
