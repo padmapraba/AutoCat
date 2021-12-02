@@ -63,15 +63,15 @@
         </v-col>
 
         <!-- make and model -->
-        <v-col>
-          <v-menu bottom :close-on-content-click=false>
+        <v-col >
+          <v-menu :offsetY="5" bottom :close-on-content-click=false light>
             <template v-slot:activator="{ on, attrs }">
               <v-btn color="" light v-bind="attrs" v-on="on">
                 Make & Model
               </v-btn>
             </template>
 
-              <template>
+              <v-list>
                 <v-item-group mulitple value=[] v-on:change="onMakeSelected">
                   <v-container>
                     <v-row rows="3">
@@ -94,7 +94,7 @@
                     </v-row>
                   </v-container>
                 </v-item-group>
-              </template>
+              </v-list>
          </v-menu>
         </v-col>
 
@@ -354,7 +354,7 @@
                     <v-autocomplete
                       v-model="values"
                       v-on:change="onCylindersChange"
-                      :items="cylinders"
+                      :items="cylinderTypes"
                       outlined
                       dense
                       chips
@@ -381,7 +381,8 @@
                     Engine Size
                     <v-autocomplete
                       v-model="values"
-                      :items="items"
+                      v-on:change="onEngineSizeChange"
+                      :items="engineSizes"
                       outlined
                       dense
                       chips
@@ -490,7 +491,7 @@
 
 
 <script>
-import { searchCars, getMakes, getCars, getStyles, getDriveWheels, getFuelTypes , getCylinderTypes} from '../api/api'
+import { searchCars, getMakes, getCars, getStyles, getDriveWheels, getFuelTypes , getCylinderTypes, getEngineSizes} from '../api/api'
 
 export default {
   name: "SearchPage",
@@ -516,7 +517,8 @@ export default {
     makes: [{make: "Ford"}],
     styles: [{"body_style": "Sedan"}],
     fuelTypes: [{"fuel_type": "Gas"}],
-    cylinders: [{"cylinders":3}],
+    cylinderTypes: [{"cylinders":3}],
+    engineSizes: [{"engine_size":4}],
     driveWheels: [],
     carResults: [],
     // styles: [],
@@ -561,6 +563,12 @@ export default {
     async getCylinderTypes() {
       const cylinders = await getCylinderTypes();
       this.cylinderTypes = cylinders.result.map(x => x.cylinders)
+    },
+
+    async getEngineSizes() {
+      const sizes = await getEngineSizes();
+      console.log(sizes)
+      this.engineSizes = sizes.result.map(x => x.engine_size)
     },
 
     onMakeSelected(event) {
@@ -617,8 +625,10 @@ export default {
         this.filters.cylinders = value;
     },
 
+    onEngineSizeChange(value){
+        this.filters.engineSize = value;
+    },
     
-
     // NOT SURE IF THIS WORKS
     async filterCars() {
       const cars = await getCars();
@@ -639,6 +649,7 @@ export default {
     this.getFuelTypes();
     this.getDriveWheels();
     this.getCylinderTypes();
+    this.getEngineSizes();
     this.filterCars();
   }
 };

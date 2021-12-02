@@ -97,3 +97,19 @@ export async function getCylinderTypes() {
     console.error("API error", e);
   }
 }
+
+export async function getEngineSizes() {
+  const url = `${HOST}/options/engSizes`;
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const obj = await response.json();
+    return obj;
+  } catch (e) {
+    console.error("API error", e);
+  }
+}

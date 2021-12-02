@@ -12,7 +12,7 @@ async function initPostgres() {
     user: "postgres",
     host: "localhost",
     database: "autocat",
-    port: 5433, // postgres default
+    port: 5432, // postgres default
   });
   await pg.connect();
   const res = await pg.query("SELECT NOW()");
@@ -102,6 +102,22 @@ app.get("/options/fuel", async (req, res) => {
 app.get("/options/cylinders", async (req, res) => {
   try {
     let query = `SELECT DISTINCT cylinders from engine`;
+    console.log("Executing final DB query: ", query);
+
+    const dbResult = await pg.query(query);
+    const rows = dbResult.rows;
+    return res.json({
+      result: rows,
+      count: rows.length,
+    });
+  } catch (e) {
+    console.error(e);
+  }
+});
+
+app.get("/options/engSizes", async (req, res) => {
+  try {
+    let query = `SELECT DISTINCT engine_size from engine`;
     console.log("Executing final DB query: ", query);
 
     const dbResult = await pg.query(query);
