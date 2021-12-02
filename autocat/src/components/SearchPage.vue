@@ -4,7 +4,7 @@
       <v-row>
         <!-- price -->
         <v-col>
-          <v-menu bottom :close-on-content-click=false>
+          <v-menu :offset-y="8" bottom :close-on-content-click=false>
             <template v-slot:activator="{ on, attrs }">
               <v-btn color="" light v-bind="attrs" v-on="on"> Price </v-btn>
             </template>
@@ -64,7 +64,7 @@
 
         <!-- make and model -->
         <v-col >
-          <v-menu :offsetY="5" bottom :close-on-content-click=false light>
+          <v-menu :offset-y="8" bottom :close-on-content-click=false light>
             <template v-slot:activator="{ on, attrs }">
               <v-btn color="" light v-bind="attrs" v-on="on">
                 Make & Model
@@ -100,7 +100,7 @@
 
         <!-- body type -->
         <v-col>
-          <v-menu bottom :close-on-content-click=false>
+          <v-menu :offset-y="8" bottom :close-on-content-click=false>
             <template v-slot:activator="{ on, attrs }">
               <v-btn color="" light v-bind="attrs" v-on="on"> Body Type </v-btn>
             </template>
@@ -195,7 +195,7 @@
 
         <!-- features -->
         <v-col>
-          <v-menu bottom :close-on-content-click=false>
+          <v-menu :offset-y="8" bottom :close-on-content-click=false>
             <template v-slot:activator="{ on, attrs }">
               <v-btn color="" light v-bind="attrs" v-on="on"> Features </v-btn>
             </template>
@@ -210,8 +210,8 @@
                       v-on:change="onSafetyChange"
                       step="1"
                       class="align-center"
-                      :max="seatsMax"
-                      :min="seatsMin"
+                      :max="safetyMax"
+                      :min="safetyMin"
                       hide-details
                       style="width: 150px"
                     >
@@ -414,14 +414,14 @@
         <v-col>
           <v-btn
             v-on:click="searchCars"
-            color="primary"
             depressed
+            color="error"
             elevation="1"
-            large
-            outlined
-            text
+            
           >Search</v-btn>
+          
         </v-col>
+        
       </v-row>
     </div>
 
@@ -508,6 +508,8 @@ export default {
     doorMax: 4,
     seatsMin: 2,
     seatsMax: 7,
+    safetyMin: 0,
+    safetyMax: 5,
     cityMin: 0,
     cityMax: 100,
     highwayMin: 0,
@@ -527,6 +529,7 @@ export default {
       priceMax: 100000,
       doorsMin: 2,
       seatsMin: 4,
+      safetyMin: 4,
       make: [],
     }
   }),
@@ -591,7 +594,7 @@ export default {
     },
 
     onSafetyChange(value) {
-      this.filters.safety = value;
+      this.filters.safetyMin = value;
     },
 
     onCityMPGChange(range) {

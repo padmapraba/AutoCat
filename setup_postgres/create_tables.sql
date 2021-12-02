@@ -4,7 +4,7 @@ CREATE TABLE car
     make text,
     model text, 
     safety_rating integer,
-    price double precision,
+    price float,
     parent_comapny text,
     image_url text,
     PRIMARY KEY (car_id)
