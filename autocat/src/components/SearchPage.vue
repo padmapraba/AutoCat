@@ -431,7 +431,9 @@
 
         <v-img
           height="200"
-          src="@/assets/Honda_Accord.jpg"
+          width="300"
+          :src="getImgUrl(car.make, car.model)" v-bind:alt="car.make"
+          
           
         ></v-img>
 
@@ -603,6 +605,11 @@ export default {
     async filterCars() {
       const cars = await getCars();
       this.cars = cars.result;
+    },
+
+    getImgUrl(make, model) {
+      var images = require.context("../assets/car_imgs", false, /.jpg/);
+      return images("./" + make + "_" + model + ".jpg");
     },
 
   },
