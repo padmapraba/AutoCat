@@ -431,7 +431,7 @@
 
         <v-img
           height="200"
-          src="@/assets/honda_accord.webp"
+          src="@/assets/Honda_Accord.jpg"
           
         ></v-img>
 

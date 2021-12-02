@@ -4,10 +4,9 @@ CREATE TABLE car
     make text,
     model text, 
     safety_rating integer,
-    price money,
+    price double precision,
     parent_comapny text,
     image_url text,
-    website text,
     PRIMARY KEY (car_id)
 );
 
